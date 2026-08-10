@@ -6,6 +6,8 @@ import { CardPokemon } from "../Componentes/CartPokemon";
 const Personajes = () => {
 
     const [pokemons, setPokemons] = useState([]);
+    const [busqueda, setBusqueda] = useState("");
+    const [pokemonFilter, setPokemonFiltter] = useState([]);
 
     const { getPokemons } = useContext(PokemonContext);
 
@@ -16,22 +18,24 @@ const Personajes = () => {
             const pokemonsApi = await getPokemons();
 
             setPokemons(pokemonsApi);
-               setpokemonFiltter(p)
+            setPokemonFiltter(pokemonsApi);
         };
 
         getPoke();
-     
 
     }, [getPokemons]);
 
-const [buscadorPoke,setBPokemons]=useState()
-    const buscador =(e)=>{
+    const buscador = (e) => {
 
-       const polemonsEncontrados= pokemons.filter(poke =>poke.name.toLoWoerCase().includes(e.targe.value)==buscador.toLoWoerCase())
-    }
+        const texto = e.target.value;
+        setBusqueda(texto);
 
-    const [pokemonFilter,setpokemonFiltter]=useState([])
+        const pokemonsEncontrados = pokemons.filter(poke =>
+            poke.name.toLowerCase().includes(texto.toLowerCase())
+        );
 
+        setPokemonFiltter(pokemonsEncontrados);
+    };
 
     return (
         <Container className="py-4">
@@ -52,7 +56,7 @@ const [buscadorPoke,setBPokemons]=useState()
                         text="dark"
                         className="rounded-pill px-3 py-2 fw-bold"
                     >
-                        {pokemons.length} Pokémon
+                        {pokemonFilter.length} Pokémon
                     </Badge>
                 </div>
             </div>
@@ -67,9 +71,9 @@ const [buscadorPoke,setBPokemons]=useState()
                         type="text"
                         placeholder="Buscar Pokémon"
                         aria-label="Buscar Pokémon"
-                        readOnly
                         className="border-start-0 rounded-end-pill"
-                        onChange={(e)=>buscadorPoke(e)}
+                        value={busqueda}
+                        onChange={buscador}
                     />
 
                     <Button
@@ -83,7 +87,7 @@ const [buscadorPoke,setBPokemons]=useState()
             </div>
 
             <Row className="g-4">
-                {pokemons.map((pokemon) => (
+                {pokemonFilter.map((pokemon) => (
                     <Col key={pokemon.name} xs={12} sm={6} md={4} lg={3}>
                         <CardPokemon
                             {...pokemon}
