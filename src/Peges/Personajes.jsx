@@ -1,41 +1,38 @@
-import { useContext, useEffect, useState } from "react";
-import { Badge, Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import { useContext, useState } from "react";
+import { Badge, Button, Col, Container, Form, InputGroup, NavLink, Row } from "react-bootstrap";
 import { PokemonContext } from "./PokemonContext";
 import { CardPokemon } from "../Componentes/CartPokemon";
-
+import { Link } from "react-router";
+Link
 const Personajes = () => {
-
-    const [pokemons, setPokemons] = useState([]);
     const [busqueda, setBusqueda] = useState("");
-    const [pokemonFilter, setPokemonFiltter] = useState([]);
-
-    const { getPokemons } = useContext(PokemonContext);
-
-    useEffect(() => {
-
-        const getPoke = async () => {
-
-            const pokemonsApi = await getPokemons();
-
-            setPokemons(pokemonsApi);
-            setPokemonFiltter(pokemonsApi);
-        };
-
-        getPoke();
-
-    }, [getPokemons]);
+    const { pokemonFilter, filtrarPokemons, favoritos } = useContext(PokemonContext);
+    const [page,setPage]=useState(0)
 
     const buscador = (e) => {
-
+        const pokemosEncontrados =pokemos.filter(pokemon=>pokemon.name .toloWerCase().include(e.target.pokemonFilter(pokemosEncontrados))).slece(0-20)
         const texto = e.target.value;
+        
+        if(e.target.value=>""){
+            setpokemonFiltet(paginados[page])
+        }else{
+            setpokemonFiltet(pokemosEncontrados)
+        }
+
         setBusqueda(texto);
+        filtrarPokemons(texto);
 
-        const pokemonsEncontrados = pokemons.filter(poke =>
-            poke.name.toLowerCase().includes(texto.toLowerCase())
-        );
-
-        setPokemonFiltter(pokemonsEncontrados);
     };
+
+const Adelante=()={
+setPage(prev=>prev+1)
+setpokemonFiltet(paginados [page+1])
+}
+const Atras=()={
+setPage(prev => prev-1)
+setPolemosnFilter(paginados[page+1])
+
+}
 
     return (
         <Container className="py-4">
@@ -45,20 +42,19 @@ const Personajes = () => {
             >
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                     <div>
-                        <p className="text-uppercase text-warning fw-bold mb-1">
-                            Pokédex
-                        </p>
+                        <p className="text-uppercase text-warning fw-bold mb-1">Pokédex</p>
                         <h2 className="mb-0">Catálogo</h2>
                     </div>
 
-                    <Badge
-                        bg="light"
-                        text="dark"
-                        className="rounded-pill px-3 py-2 fw-bold"
-                    >
+                    <Badge bg="light" text="dark" className="rounded-pill px-3 py-2 fw-bold">
                         {pokemonFilter.length} Pokémon
                     </Badge>
+
+                 
+
+
                 </div>
+                
             </div>
 
             <div className="mb-4">
@@ -76,21 +72,20 @@ const Personajes = () => {
                         onChange={buscador}
                     />
 
-                    <Button
-                        variant="warning"
-                        className="rounded-pill ms-2 px-3 fw-bold"
-                        type="button"
-                    >
+                    <Button variant="warning" className="rounded-pill ms-2 px-3 fw-bold" type="button">
                         Buscar
                     </Button>
                 </InputGroup>
             </div>
+            <button onClick={()=>{Adelante}}  >Adelante</button>
+            <button onClick={()=>{Atras}} >Atras</button>
 
             <Row className="g-4">
-                {pokemonFilter.map((pokemon) => (
-                    <Col key={pokemon.name} xs={12} sm={6} md={4} lg={3}>
+                {pokemonFilter?.map((pokemon) => (
+                    <Col key={pokemon.id} xs={12} sm={6} md={4} lg={3}>
                         <CardPokemon
                             {...pokemon}
+                            isFavorite={favoritos.some((fav) => fav.id === pokemon.id)}
                         />
                     </Col>
                 ))}
