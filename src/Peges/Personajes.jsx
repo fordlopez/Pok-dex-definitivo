@@ -52,7 +52,6 @@ setPolemosnFilter(paginados[page+1])
 
                  
 
-
                 </div>
                 
             </div>
