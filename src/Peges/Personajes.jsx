@@ -1,43 +1,26 @@
-import { useContext, useEffect, useState } from "react";
-import { Badge, Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import { useContext, useState } from "react";
+import { Badge, Button, Col, Container, Form, InputGroup, Row, Spinner } from "react-bootstrap";
 import { PokemonContext } from "./PokemonContext";
 import { CardPokemon } from "../Componentes/CartPokemon";
 
 const Personajes = () => {
-
-    const [pokemons, setPokemons] = useState([]);
     const [busqueda, setBusqueda] = useState("");
-    const [pokemonFilter, setPokemonFiltter] = useState([]);
-
-    const { getPokemons } = useContext(PokemonContext);
-
-    useEffect(() => {
-
-        const getPoke = async () => {
-
-            const pokemonsApi = await getPokemons();
-
-            setPokemons(pokemonsApi);
-            setPokemonFiltter(pokemonsApi);
-        };
-
-        getPoke();
-
-    }, [getPokemons]);
+    const {
+        pokemonFilter,
+        filtrarPokemons,
+        favoritos,
+        pagina,
+        totalPaginas,
+        siguientePagina,
+        paginaAnterior,
+        cargando,
+    } = useContext(PokemonContext);
 
     const buscador = (e) => {
-
         const texto = e.target.value;
         setBusqueda(texto);
-
-        const pokemonsEncontrados = pokemons.filter(poke =>
-            poke.name.toLowerCase().includes(texto.toLowerCase())
-        );
-
-        setPokemonFiltter(pokemonsEncontrados);
+        filtrarPokemons(texto);
     };
-
-
 
     return (
         <Container className="py-4">
@@ -47,18 +30,12 @@ const Personajes = () => {
             >
                 <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                     <div>
-                        <p className="text-uppercase text-warning fw-bold mb-1">
-                            Pokédex
-                        </p>
+                        <p className="text-uppercase text-warning fw-bold mb-1">Pokédex</p>
                         <h2 className="mb-0">Catálogo</h2>
                     </div>
 
-                    <Badge
-                        bg="light"
-                        text="dark"
-                        className="rounded-pill px-3 py-2 fw-bold"
-                    >
-                        {pokemonFilter.length} Pokémon
+                    <Badge bg="light" text="dark" className="rounded-pill px-3 py-2 fw-bold">
+                        Página {pagina + 1} de {totalPaginas || 1}
                     </Badge>
                 </div>
             </div>
@@ -78,25 +55,44 @@ const Personajes = () => {
                         onChange={buscador}
                     />
 
-                    <Button
-                        variant="warning"
-                        className="rounded-pill ms-2 px-3 fw-bold"
-                        type="button"
-                    >
+                    <Button variant="warning" className="rounded-pill ms-2 px-3 fw-bold" type="button">
                         Buscar
                     </Button>
                 </InputGroup>
             </div>
 
-            <Row className="g-4">
-                {pokemonFilter.map((pokemon) => (
-                    <Col key={pokemon.name} xs={12} sm={6} md={4} lg={3}>
-                        <CardPokemon
-                            {...pokemon}
-                        />
-                    </Col>
-                ))}
-            </Row>
+            <div className="d-flex justify-content-center align-items-center gap-3 mb-4">
+                <Button variant="outline-dark" onClick={paginaAnterior} disabled={pagina === 0 || cargando}>
+                    Atrás
+                </Button>
+
+                {/*   <span>Página {pagina + 1} de {totalPaginas || 1}</span> */}
+
+                <Button variant="outline-dark" onClick={siguientePagina} disabled={pagina + 1 >= totalPaginas || cargando}>
+                    Adelante
+                </Button>
+            </div>
+
+            {cargando ? (
+                <div className="text-center py-5">
+                    <Spinner animation="border" variant="warning" />
+                </div>
+            ) : (
+                <Row className="g-4">
+                    {pokemonFilter.length === 0 ? (
+                        <p className="text-center">No se encontraron Pokémon.</p>
+                    ) : (
+                        pokemonFilter.map((pokemon) => (
+                            <Col key={pokemon.id} xs={12} sm={6} md={4} lg={3}>
+                                <CardPokemon
+                                    {...pokemon}
+                                    isFavorite={favoritos.some((fav) => fav.id === pokemon.id)}
+                                />
+                            </Col>
+                        ))
+                    )}
+                </Row>
+            )}
         </Container>
     );
 };
