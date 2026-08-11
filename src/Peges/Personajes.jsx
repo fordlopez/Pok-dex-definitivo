@@ -1,38 +1,26 @@
 import { useContext, useState } from "react";
-import { Badge, Button, Col, Container, Form, InputGroup, NavLink, Row } from "react-bootstrap";
+import { Badge, Button, Col, Container, Form, InputGroup, Row, Spinner } from "react-bootstrap";
 import { PokemonContext } from "./PokemonContext";
 import { CardPokemon } from "../Componentes/CartPokemon";
-import { Link } from "react-router";
-Link
+
 const Personajes = () => {
     const [busqueda, setBusqueda] = useState("");
-    const { pokemonFilter, filtrarPokemons, favoritos } = useContext(PokemonContext);
-    const [page,setPage]=useState(0)
+    const {
+        pokemonFilter,
+        filtrarPokemons,
+        favoritos,
+        pagina,
+        totalPaginas,
+        siguientePagina,
+        paginaAnterior,
+        cargando,
+    } = useContext(PokemonContext);
 
     const buscador = (e) => {
-        const pokemosEncontrados =pokemos.filter(pokemon=>pokemon.name .toloWerCase().include(e.target.pokemonFilter(pokemosEncontrados))).slece(0-20)
         const texto = e.target.value;
-        
-        if(e.target.value=>""){
-            setpokemonFiltet(paginados[page])
-        }else{
-            setpokemonFiltet(pokemosEncontrados)
-        }
-
         setBusqueda(texto);
         filtrarPokemons(texto);
-
     };
-
-const Adelante=()={
-setPage(prev=>prev+1)
-setpokemonFiltet(paginados [page+1])
-}
-const Atras=()={
-setPage(prev => prev-1)
-setPolemosnFilter(paginados[page+1])
-
-}
 
     return (
         <Container className="py-4">
@@ -47,13 +35,9 @@ setPolemosnFilter(paginados[page+1])
                     </div>
 
                     <Badge bg="light" text="dark" className="rounded-pill px-3 py-2 fw-bold">
-                        {pokemonFilter.length} Pokémon
+                        Página {pagina + 1} de {totalPaginas || 1}
                     </Badge>
-
-                 
-
                 </div>
-                
             </div>
 
             <div className="mb-4">
@@ -76,19 +60,39 @@ setPolemosnFilter(paginados[page+1])
                     </Button>
                 </InputGroup>
             </div>
-            <button onClick={()=>{Adelante}}  >Adelante</button>
-            <button onClick={()=>{Atras}} >Atras</button>
 
-            <Row className="g-4">
-                {pokemonFilter?.map((pokemon) => (
-                    <Col key={pokemon.id} xs={12} sm={6} md={4} lg={3}>
-                        <CardPokemon
-                            {...pokemon}
-                            isFavorite={favoritos.some((fav) => fav.id === pokemon.id)}
-                        />
-                    </Col>
-                ))}
-            </Row>
+            <div className="d-flex justify-content-center align-items-center gap-3 mb-4">
+                <Button variant="outline-dark" onClick={paginaAnterior} disabled={pagina === 0 || cargando}>
+                    Atrás
+                </Button>
+
+                {/*   <span>Página {pagina + 1} de {totalPaginas || 1}</span> */}
+
+                <Button variant="outline-dark" onClick={siguientePagina} disabled={pagina + 1 >= totalPaginas || cargando}>
+                    Adelante
+                </Button>
+            </div>
+
+            {cargando ? (
+                <div className="text-center py-5">
+                    <Spinner animation="border" variant="warning" />
+                </div>
+            ) : (
+                <Row className="g-4">
+                    {pokemonFilter.length === 0 ? (
+                        <p className="text-center">No se encontraron Pokémon.</p>
+                    ) : (
+                        pokemonFilter.map((pokemon) => (
+                            <Col key={pokemon.id} xs={12} sm={6} md={4} lg={3}>
+                                <CardPokemon
+                                    {...pokemon}
+                                    isFavorite={favoritos.some((fav) => fav.id === pokemon.id)}
+                                />
+                            </Col>
+                        ))
+                    )}
+                </Row>
+            )}
         </Container>
     );
 };
