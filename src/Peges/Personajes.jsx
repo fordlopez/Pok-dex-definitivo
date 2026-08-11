@@ -66,7 +66,7 @@ const Personajes = () => {
                     Atrás
                 </Button>
 
-                {/*   <span>Página {pagina + 1} de {totalPaginas || 1}</span> */}
+               
 
                 <Button variant="outline-dark" onClick={siguientePagina} disabled={pagina + 1 >= totalPaginas || cargando}>
                     Adelante

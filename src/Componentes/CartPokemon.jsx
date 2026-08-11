@@ -21,6 +21,7 @@ const CardPokemon = ({ id, name, types, image, isFavorite }) => {
         addFavorito({ id, name, image, types });
     };
 
+
     return (
         
         <Card

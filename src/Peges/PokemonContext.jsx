@@ -3,17 +3,15 @@ import { apiClient } from "./api";
 
 const PokemonContext = createContext();
 
-const LIMIT_POR_PAGINA = 20;
-
 const PokemonProvider = ({ children }) => {
-    const [listaCompleta, setListaCompleta] = useState([]); // {name, url} de TODOS los pokemons
-    const [listaActual, setListaActual] = useState([]);      // lista sobre la que se pagina (completa o filtrada)
-    const [pokemonFilter, setPokemonFilter] = useState([]);  // detalles completos de la página visible
+    const [listaCompleta, setListaCompleta] = useState([]);
+    const [listaActual, setListaActual] = useState([]);
+    const [pokemonFilter, setPokemonFilter] = useState([]);
     const [favoritos, setFavoritos] = useState([]);
     const [pagina, setPagina] = useState(0);
     const [cargando, setCargando] = useState(false);
+    const LIMIT_POR_PAGINA = 20;
 
-    // 1. Traer la lista liviana de TODOS los pokemons (una sola llamada, rápida)
     useEffect(() => {
         const getListaCompleta = async () => {
             const response = await apiClient.get("/pokemon?limit=1302");
@@ -24,8 +22,9 @@ const PokemonProvider = ({ children }) => {
         getListaCompleta();
     }, []);
 
-    // 2. Cuando cambia la lista activa (completa o filtrada), cargar la página 0 de detalles
+
     useEffect(() => {
+
         if (listaActual.length > 0) {
             cargarPagina(0, listaActual);
         } else {
@@ -33,7 +32,7 @@ const PokemonProvider = ({ children }) => {
         }
     }, [listaActual]);
 
-    // Trae los detalles completos SOLO de los pokemons de una página (20 a la vez)
+
     const cargarPagina = async (numeroPagina, lista) => {
         setCargando(true);
 
@@ -58,18 +57,20 @@ const PokemonProvider = ({ children }) => {
         setCargando(false);
     };
 
+
+
     const totalPaginas = Math.ceil(listaActual.length / LIMIT_POR_PAGINA);
 
-    // Buscador: filtra sobre los ~1300 NOMBRES (barato, sin llamadas a la API)
     const filtrarPokemons = (texto) => {
         if (!texto) {
-            setListaActual(listaCompleta); // sin búsqueda: vuelve a la lista completa
+            setListaActual(listaCompleta);
             return;
         }
 
         const encontrados = listaCompleta.filter((poke) =>
             poke.name.toLowerCase().includes(texto.toLowerCase())
         );
+
 
         setListaActual(encontrados);
     };
