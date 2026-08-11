@@ -1,6 +1,6 @@
 
 
- import { createContext } from "react";
+import { createContext } from "react";
 import { apiClient } from "./api";
 
 const PokemonContext = createContext();
@@ -21,7 +21,7 @@ const PokemonProvider = ({ children }) => {
                 return {
                     name: responsePokemon.data.name,
                     types: responsePokemon.data.types/* .map(item=> item.type.name) */,
-                   image: responsePokemon.data.sprites.other.home.front_default 
+                    image: responsePokemon.data.sprites.other.home.front_default
                 };
             })
         );
@@ -30,7 +30,7 @@ const PokemonProvider = ({ children }) => {
 
         return pokemons;
     };
-
+    console.log(getPokemons)
     return (
         <PokemonContext.Provider value={{ getPokemons }}>
             {children}
@@ -39,4 +39,3 @@ const PokemonProvider = ({ children }) => {
 };
 
 export { PokemonContext, PokemonProvider };
- 

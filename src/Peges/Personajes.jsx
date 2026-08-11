@@ -37,6 +37,8 @@ const Personajes = () => {
         setPokemonFiltter(pokemonsEncontrados);
     };
 
+
+
     return (
         <Container className="py-4">
             <div
